@@ -1,12 +1,17 @@
 package com.android_package_installer
 
+import android.Manifest
 import android.app.Activity
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageInstaller
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Build
+import androidx.core.content.FileProvider
+import io.flutter.plugin.common.MethodChannel.Result
+import java.io.File
 import java.io.FileInputStream
 import java.io.IOException
 
@@ -69,6 +74,100 @@ internal class Installer(private val context: Context, private var activity: Act
                 }
             }
         }
+    }
+
+    /**
+     * 打开应用市场-指定应用详情页
+     */
+    fun openAppMarket(arguments: Map<*, *>?, result: Result) {
+        val targetMarketPackageName = arguments?.get("targetMarketPackageName") as String? ?: ""
+        val isOpenSystemMarket = arguments?.get("isOpenSystemMarket") as Boolean? ?: true
+        val applicationPackageName = arguments?.get("applicationPackageName") as String? ?: ""
+
+        val openResult = AppHelper.openAppMarket(
+            activity,
+            applicationPackageName = applicationPackageName,
+            targetMarketPackageName = targetMarketPackageName,
+            isOpenSystemMarket = isOpenSystemMarket
+        )
+
+        if (openResult) {
+            result.success(true)
+        } else {
+            result.error("openAppMarket", "open market failed!", "")
+        }
+    }
+
+    /**
+     * 打开设置-指定应用详情页
+     */
+    fun openSettingAppDetails(arguments: Map<*, *>?, result: Result) {
+        val applicationPackageName = arguments?.get("applicationPackageName") as String? ?: ""
+
+        val openAppSettingDetail =
+            AppHelper.openAppSettingDetail(
+                activity,
+                applicationPackageName = applicationPackageName
+            )
+        if (openAppSettingDetail) {
+            result.success(true)
+        } else {
+            result.error("openSettingAppDetails", "open failed", "")
+        }
+    }
+
+    /**
+     * 安装apk
+     * 安卓7.0 需要androidx.core.content.FileProvider
+     * 安卓8.0 需要请求安装权限 Manifest.permission.REQUEST_INSTALL_PACKAGES
+     *
+     * GooglePlay策略
+     * 请主动声明[Manifest.permission.REQUEST_INSTALL_PACKAGES]权限
+     *
+     * https://github.com/AnyLifeZLB/DownloadInstaller
+     * https://github.com/hgncxzy/InstallApk
+     * */
+    /*@RequiresApi(Build.VERSION_CODES.M)
+    @RequiresPermission(value = Manifest.permission.REQUEST_INSTALL_PACKAGES)*/
+    fun installApk(file: File?) {
+        if (file == null || !file.canRead()) return
+        //兼容8.0
+        /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val hasInstallPermission: Boolean =
+                context.packageManager.canRequestPackageInstalls()
+            if (!hasInstallPermission) {
+                //注意这个是8.0新API
+                val intent = Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES)
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                context.startActivity(intent)
+                return
+            }
+        }*/
+        val intent = Intent(Intent.ACTION_VIEW)
+        val type = "application/vnd.android.package-archive"
+        val uri = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
+            try {
+                FileProvider.getUriForFile(
+                    activity ?: context,
+                    "${(activity ?: context).packageName}.fileprovider",
+                    file
+                )
+            } catch (e: Exception) {
+                FileProvider.getUriForFile(
+                    activity ?: context,
+                    (activity ?: context).packageName,
+                    file
+                )
+            }
+        } else {
+            Uri.fromFile(file)
+        }
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        intent.setDataAndType(uri, type)
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        (activity ?: context).startActivity(intent)
     }
 }
 

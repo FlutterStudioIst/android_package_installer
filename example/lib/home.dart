@@ -64,6 +64,26 @@ class _HomeScreenState extends State<HomeScreen> {
                   'PackageManager installation status: $_installationStatus',
                 ),
               const SizedBox(height: 30),
+              _button('Install apk file session', () async {
+                if (_filePathFieldController.text.isNotEmpty) {
+                  setState(() {
+                    _installationStatus = '';
+                  });
+                  try {
+                    int? code =
+                    await AndroidPackageInstaller.installApkSession(
+                        apkFilePath: _filePathFieldController.text);
+                    if (code != null) {
+                      setState(() {
+                        _installationStatus =
+                            PackageInstallerStatus.byCode(code).name;
+                      });
+                    }
+                  } on PlatformException {
+                    print('Error at Platform. Failed to install apk file.');
+                  }
+                }
+              }),
               _button('Install apk file', () async {
                 if (_filePathFieldController.text.isNotEmpty) {
                   setState(() {
@@ -82,6 +102,33 @@ class _HomeScreenState extends State<HomeScreen> {
                   } on PlatformException {
                     print('Error at Platform. Failed to install apk file.');
                   }
+                }
+              }),
+              _button('platformVersion', () async {
+                try {
+                  String? platformVersion =
+                  await AndroidPackageInstaller.platformVersion;
+                  if (platformVersion != null) {
+                    setState(() {
+                      _installationStatus = platformVersion;
+                    });
+                  }
+                } on PlatformException {
+                  print('Error at Platform. Failed to install apk file.');
+                }
+              }),
+              _button('openAppMarket', () async {
+                try {
+                  await AndroidPackageInstaller.openAppMarket();
+                } on PlatformException {
+                  print('Error at Platform. Failed to install apk file.');
+                }
+              }),
+              _button('openAppSettingDetails', () async {
+                try {
+                  await AndroidPackageInstaller.openAppSettingDetails();
+                } on PlatformException {
+                  print('Error at Platform. Failed to install apk file.');
                 }
               }),
               const Spacer(),

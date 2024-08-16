@@ -16,7 +16,29 @@ abstract class AndroidPackageInstallerPlatform extends PlatformInterface {
     _instance = instance;
   }
 
+  Future<int?> installApkSession(String path) {
+    throw UnimplementedError('installApkSession() has not been implemented.');
+  }
+
   Future<int?> installApk(String path) {
     throw UnimplementedError('installApk() has not been implemented.');
+  }
+
+  Future<String?> platformVersion() {
+    throw UnimplementedError('platformVersion() has not been implemented.');
+  }
+
+  Future<bool> openAppMarket({
+    String applicationPackageName = "",
+    String targetMarketPackageName = "",
+    bool isOpenSystemMarket = true,
+  }) {
+    throw UnimplementedError('openAppMarket() has not been implemented.');
+  }
+
+  Future<bool> openAppSettingDetails({
+    String applicationPackageName = "",
+  }) {
+    throw UnimplementedError('openAppSettingDetails() has not been implemented.');
   }
 }
