@@ -151,15 +151,23 @@ internal class Installer(private val context: Context, private var activity: Act
             try {
                 FileProvider.getUriForFile(
                     activity ?: context,
-                    "${(activity ?: context).packageName}.fileprovider",
+                    "${(activity ?: context).packageName}.fileProvider",
                     file
                 )
             } catch (e: Exception) {
-                FileProvider.getUriForFile(
-                    activity ?: context,
-                    (activity ?: context).packageName,
-                    file
-                )
+                try {
+                    FileProvider.getUriForFile(
+                        activity ?: context,
+                        "${(activity ?: context).packageName}.fileprovider",
+                        file
+                    )
+                } catch (e: Exception) {
+                    FileProvider.getUriForFile(
+                        activity ?: context,
+                        (activity ?: context).packageName,
+                        file
+                    )
+                }
             }
         } else {
             Uri.fromFile(file)
