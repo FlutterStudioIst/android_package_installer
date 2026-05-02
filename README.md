@@ -1,3 +1,29 @@
+
+# flutter_android_package_installer
+
+本库基于[android_package_installer](https://pub.dev/packages/android_package_installer)改造, 适配最新`Flutter 3.24.0`版本, 并修改了以下内容:
+
+- 原库的`installApk`方法调用的是`PackageInstaller.Session`方法实现的. [PackageInstaller](https://developer.android.com/reference/android/content/pm/PackageInstaller) 我这里测试就没成功过. 所以这里更改了此方法的默认实现为`Intent.ACTION_VIEW`
+- 原库的`installApk`方法改名为`installApkSession`
+- 修改`compileSdk 35`
+- 新增`getPlatformVersion`方法
+- 新增`openAppMarket`方法
+- 新增`openAppSettingDetail`方法
+
+## 补充一点
+
+`FileProvider`资源配置需要包含`root-path`:
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<paths xmlns:android="http://schemas.android.com/apk/res/android">
+    <external-path name="external_files" path="."/>
+    <root-path name="root" path="" />
+</paths>
+```
+
+---
+
 # android_package_installer
 A Flutter plugin for installing Android package from apk file. Plugin uses Android Package Installer and
 requires **minimum API Level version 21**.
