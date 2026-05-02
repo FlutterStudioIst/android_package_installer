@@ -1,4 +1,4 @@
-import 'package:android_package_installer/src/method_channel.dart';
+import 'package:flutter_android_package_installer/src/method_channel.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
 abstract class AndroidPackageInstallerPlatform extends PlatformInterface {

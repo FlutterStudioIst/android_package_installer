@@ -10,7 +10,7 @@ dependencies:
     sdk: flutter
   permission_handler: ^12.0.0+1
   filesystem_picker: ^4.1.0
-  android_package_installer:
+  flutter_android_package_installer:
     path: ../
 
 

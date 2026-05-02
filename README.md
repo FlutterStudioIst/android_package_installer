@@ -4,7 +4,7 @@ requires **minimum API Level version 21**.
 
 ## Using
 ```dart
-import 'package:android_package_installer/android_package_installer.dart';
+import 'package:flutter_android_package_installer/android_package_installer.dart';
 
   int? statusCode = await AndroidPackageInstaller.installApk(apkFilePath: '/sdcard/Download/com.example.apk');
   if (statusCode != null) {

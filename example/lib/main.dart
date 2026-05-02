@@ -1,5 +1,6 @@
-import 'package:android_package_installer_example/home.dart';
 import 'package:flutter/material.dart';
+
+import 'home.dart';
 
 void main() {
   runApp(const MyApp());
